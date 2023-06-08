@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from Game.GameConfig import GameConfig
-from Game.GameStatus import GameStatus
+from game_logic.game_config import GameConfig
+from game_logic.game_status import GameStatus
 
 
 class IGameState(ABC):

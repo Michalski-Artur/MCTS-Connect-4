@@ -1,4 +1,4 @@
-from IGameVisualizer import IGameVisualizer
+from game_visualizer.igame_visualizer import IGameVisualizer
 import numpy as np
 
 

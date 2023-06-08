@@ -1,8 +1,9 @@
 import math
 import random
+import time
 
-from Game.IGameState import IGameState
-from Player.MCTS.IMctsNode import IMctsNode
+from game_logic.igame_state import IGameState
+from player.mcts.imcts_node import IMctsNode
 
 
 class MctsNode(IMctsNode):
@@ -48,10 +49,10 @@ class MctsNode(IMctsNode):
         return self.exploitation_value + self.exploration_value
 
     def build_tree(self, should_continue):
-        # TODO
-        # Add actual condition whether should continue building tree
+        iteration = 1
+        start_time = time.time()
 
-        while should_continue():
+        while should_continue(iteration, time.time() - start_time):
             node = self
             state = self.game_state.clone()
 
@@ -75,6 +76,8 @@ class MctsNode(IMctsNode):
                 node.number_of_runs += 1
                 node.number_of_wins = state.get_results_for_player(self.game_state.is_first_player_move)
                 node = node.parent
+
+            iteration += 1
 
     def select_child(self):
         return max(self.children, key=lambda child: child.uct)

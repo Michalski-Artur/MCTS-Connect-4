@@ -1,8 +1,8 @@
-from Game.GameStatus import GameStatus
-from Game.IGame import IGame
-from IGameState import IGameState
-from GameVisualizer.IGameVisualizer import IGameVisualizer
-from Player import IPlayer
+from game_logic.game_status import GameStatus
+from game_logic.igame import IGame
+from game_logic.igame_state import IGameState
+from game_visualizer.igame_visualizer import IGameVisualizer
+from player.iplayer import IPlayer
 
 
 class Game(IGame):

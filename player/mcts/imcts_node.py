@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Game.IGameState import IGameState
+from game_logic.igame_state import IGameState
 
 
 class IMctsNode(ABC):

@@ -1,7 +1,7 @@
-from Game.IGameState import IGameState
-from Player.IPlayer import IPlayer
-from Player.MCTS.MctsConfiguration import MctsConfiguration
-from Player.MCTS.MctsNode import MctsNode
+from game_logic.igame_state import IGameState
+from player.iplayer import IPlayer
+from player.mcts.mcts_configuration import MctsConfiguration
+from player.mcts.mcts_node import MctsNode
 
 
 class MctsPlayer(IPlayer):
@@ -16,8 +16,10 @@ class MctsPlayer(IPlayer):
     def get_top_action(self, game_state: IGameState):
         root = MctsNode(game_state, None, None)
 
-        # TODO
-        # Provide stop condition
-        root.build_tree()
+        def should_continue_building_tree(iteration, time):
+            return iteration < self.mcts_configuration.max_iterations and \
+                   time < self.mcts_configuration.time_limit
+
+        root.build_tree(should_continue_building_tree)
 
         return max(root.children, key=lambda child: child.number_of_runs).action

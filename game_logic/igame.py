@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from Game.IGameState import IGameState
-from GameVisualizer.IGameVisualizer import IGameVisualizer
-from Player.IPlayer import IPlayer
+from game_logic.igame_state import IGameState
+from game_visualizer.igame_visualizer import IGameVisualizer
+from player.iplayer import IPlayer
 
 
 class IGame(ABC):
