@@ -5,6 +5,13 @@ import numpy as np
 class ConsoleGameVisualizer(IGameVisualizer):
     def show_current_board(self, board: np.ndarray):
         board_size = board.shape
+
+        print("|", end=" ")
+        for column in range(board_size[1]):
+            print(column + 1, end=" ")
+            print("|", end=" ")
+        print()
+
         for row in reversed(range(board_size[0])):
             print("|", end=" ")
             for column in range(board_size[1]):
