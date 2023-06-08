@@ -10,8 +10,9 @@ class HumanPlayer(IPlayer):
 
         while True:
             try:
-                move = int(input('Please select column to insert token into.\n'))
+                move = int(input('Please select column to insert token into.\n')) - 1
                 if move in game_state.available_moves:
+                    game_state.make_move(move)
                     return move
                 print('Invalid move selected.')
             except ValueError:

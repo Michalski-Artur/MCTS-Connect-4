@@ -9,7 +9,7 @@ class GameState(IGameState):
 
     def __init__(self, game_config: GameConfig):
         self._game_config = game_config
-        self._board = np.ndarray(shape=(game_config.rows_number, game_config.columns_number))
+        self._board = np.zeros(shape=(game_config.rows_number, game_config.columns_number))
         self._is_first_player_move = True
         self._game_status = GameStatus.InProgress
         self._available_moves = list(range(game_config.columns_number))
@@ -48,7 +48,7 @@ class GameState(IGameState):
         if row_index == self._game_config.rows_number - 1:
             self._available_moves.remove(column_index)
 
-        if self.has_winning_sequence(column_index, player_token):
+        if self.has_winning_sequence(row_index, column_index, player_token):
             self._game_status = GameStatus.FirstPlayerWon if self.is_first_player_move else GameStatus.SecondPlayerWon
         elif not self.available_moves:
             self._game_status = GameStatus.Draw
@@ -65,24 +65,24 @@ class GameState(IGameState):
         row = last_move_row
         column = last_move_column - 1
         tokens_sum = player_token
-        while row >= 0 and self._board[row][column] == player_token:
-            row -= 1
+        while column >= 0 and self._board[row][column] == player_token:
+            column -= 1
             tokens_sum += player_token
         column = last_move_column + 1
-        while row < self._game_config.rows_number and self._board[row][column] == player_token:
-            row += 1
+        while column < self._game_config.rows_number and self._board[row][column] == player_token:
+            column += 1
             tokens_sum += player_token
 
         return abs(tokens_sum) >= 4
 
     def four_in_column(self, last_move_row, last_move_column, player_token):
-        if last_move_row < 4:
+        if last_move_row < 3:
             return False
 
         row = last_move_row - 1
         column = last_move_column
         tokens_sum = player_token
-        while self._board[row][column] == player_token:
+        while row >= 0 and self._board[row][column] == player_token:
             row -= 1
             tokens_sum += player_token
         return abs(tokens_sum) >= 4
@@ -144,8 +144,8 @@ class GameState(IGameState):
 
     def clone(self):  # -> GameState
         game_state_copy = GameState(self._game_config)
-        game_state_copy._board = self.board
-        game_state_copy._available_moves = self.available_moves
+        game_state_copy._board = self.board.copy()
+        game_state_copy._available_moves = self.available_moves.copy()
         game_state_copy._game_status = self.game_status
         game_state_copy._is_first_player_move = self.is_first_player_move
 

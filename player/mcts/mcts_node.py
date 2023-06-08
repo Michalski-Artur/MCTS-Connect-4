@@ -2,6 +2,7 @@ import math
 import random
 import time
 
+from game_logic.game_status import GameStatus
 from game_logic.igame_state import IGameState
 from player.mcts.imcts_node import IMctsNode
 
@@ -42,7 +43,7 @@ class MctsNode(IMctsNode):
 
     @property
     def exploration_value(self) -> float:
-        return math.sqrt(2 * math.log(self.parent.number_of_runs) / self.number_of_wins)
+        return math.sqrt(2 * math.log(self.parent.number_of_runs) / self.number_of_runs)
 
     @property
     def uct(self) -> float:
@@ -59,7 +60,7 @@ class MctsNode(IMctsNode):
             # Select
             while not node.untried_actions and node.game_state.available_moves:
                 node = node.select_child()
-                node.game_state.make_move(self.action)
+                state.make_move(node.action)
 
             # Expand
             if node.untried_actions:
@@ -68,13 +69,13 @@ class MctsNode(IMctsNode):
                 node = node.add_child(action, state)
 
             # Simulate
-            while state.available_moves:
+            while state.game_status == GameStatus.InProgress:
                 state.make_move(random.choice(state.available_moves))
 
             # Backpropagate
-            while not node:
-                node.number_of_runs += 1
-                node.number_of_wins = state.get_results_for_player(self.game_state.is_first_player_move)
+            while node:
+                node._number_of_runs += 1
+                node._number_of_wins = state.get_results_for_player(self.game_state.is_first_player_move)
                 node = node.parent
 
             iteration += 1
