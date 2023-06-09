@@ -10,7 +10,7 @@ from player.minimax.minimax_player import MinimaxPlayer
 
 
 def main():
-    first_player = HumanPlayer()
+    # first_player = HumanPlayer()
 
     mcts_configuration = MctsConfiguration(30_000, 10)
     first_player = MctsPlayer(mcts_configuration)

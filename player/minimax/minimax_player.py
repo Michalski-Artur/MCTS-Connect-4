@@ -28,13 +28,17 @@ class MinimaxPlayer(IPlayer):
         return self._heuristic_fields_values
 
     def get_and_make_next_move_for_player(self, game_state: IGameState) -> int:
-        game_state_copy = game_state.clone()
-        is_first_player = game_state.is_first_player_move
-        evaluation, move = self.minimax(game_state_copy, 0, True, None, is_first_player)
+        evaluation, move = self.minimax(
+            game_state=game_state,
+            current_depth=0,
+            max_turn=True,
+            move=None,
+            is_first_player=game_state.is_first_player_move)
+
         game_state.make_move(move)
         return move
 
-    def minimax(self, game_state, current_depth, max_turn, move, is_first_player):
+    def minimax(self, game_state, current_depth, max_turn, move, is_first_player) -> (int, int):
         if move is not None:
             game_state = game_state.clone()
             game_state.make_move(move)
@@ -44,19 +48,19 @@ class MinimaxPlayer(IPlayer):
         if max_turn:
             max_evaluation = -math.inf, None
             for move in game_state.available_moves:
-                evaluation = self.minimax(game_state, current_depth+1, False, move, is_first_player)
+                evaluation = self.minimax(game_state, current_depth + 1, False, move, is_first_player)
                 if evaluation[0] > max_evaluation[0]:
                     max_evaluation = evaluation[0], move
             return max_evaluation
         else:
             min_evaluation = math.inf, None
             for move in game_state.available_moves:
-                evaluation = self.minimax(game_state, current_depth+1, True, move, is_first_player)
+                evaluation = self.minimax(game_state, current_depth + 1, True, move, is_first_player)
                 if evaluation[0] < min_evaluation[0]:
                     min_evaluation = evaluation[0], move
             return min_evaluation
 
-    def evaluate_state(self, game_state, is_first_player):
+    def evaluate_state(self, game_state, is_first_player) -> int:
         multiplier = 1 if is_first_player else -1
         match game_state.game_status:
             case GameStatus.InProgress:
