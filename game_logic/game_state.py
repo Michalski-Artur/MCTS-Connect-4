@@ -69,7 +69,7 @@ class GameState(IGameState):
             column -= 1
             tokens_sum += player_token
         column = last_move_column + 1
-        while column < self._game_config.rows_number and self._board[row][column] == player_token:
+        while column < self._game_config.columns_number and self._board[row][column] == player_token:
             column += 1
             tokens_sum += player_token
 
