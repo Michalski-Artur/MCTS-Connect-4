@@ -35,7 +35,7 @@ class Game(IGame):
     def game_visualizer(self) -> GameVisualizer:
         return self._game_visualizer
 
-    def play(self) -> None:
+    def play(self) -> GameStatus:
         self.game_visualizer.show_current_board(self.game_state.board)
         while self.game_state.game_status is GameStatus.InProgress:
             current_player = self.first_player if self.game_state.is_first_player_move else self.second_player
