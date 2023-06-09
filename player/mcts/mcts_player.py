@@ -10,7 +10,11 @@ class MctsPlayer(IPlayer):
 
     def __init__(self, mcts_configuration: MctsConfiguration):
         self.mcts_configuration = mcts_configuration
+        self._player_name = "MCTS player"
 
+    def get_name(self):
+        return self._player_name
+    
     def get_and_make_next_move_for_player(self, game_state: IGameState) -> int:
         top_action = self.get_top_action(game_state)
         game_state.make_move(top_action)
