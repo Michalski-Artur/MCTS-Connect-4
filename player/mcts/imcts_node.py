@@ -30,24 +30,24 @@ class IMctsNode(ABC):
 
     @property
     @abstractmethod
-    def number_of_wins(self) -> float:
+    def reward(self) -> float:
         """Property representing aggregated score for the node"""
         pass
 
     @property
     @abstractmethod
-    def exploration_value(self) -> float:
-        """Property representing exploration value for the node"""
+    def reward_squared(self) -> float:
+        """Property representing aggregated score for the node"""
         pass
 
     @property
     @abstractmethod
-    def exploitation_value(self) -> float:
+    def sample_mean(self) -> float:
         """Property representing exploitation value for the node"""
         pass
 
     @property
     @abstractmethod
-    def uct(self) -> float:
-        """Property representing uct value for the node"""
+    def eval(self) -> float:
+        """Property representing eval value for the node"""
         pass
