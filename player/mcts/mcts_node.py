@@ -75,7 +75,7 @@ class MctsNode(IMctsNode):
             # Backpropagate
             while node:
                 node._number_of_runs += 1
-                node._number_of_wins = state.get_results_for_player(self.game_state.is_first_player_move)
+                node._number_of_wins += state.get_results_for_player(self.game_state.is_first_player_move)
                 node = node.parent
 
             iteration += 1

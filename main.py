@@ -5,13 +5,18 @@ from game_visualizer.console_game_visualizer import ConsoleGameVisualizer
 from player.human.human_player import HumanPlayer
 from player.mcts.mcts_configuration import MctsConfiguration
 from player.mcts.mcts_player import MctsPlayer
+from player.minimax.minimax_configuration import MinimaxConfiguration
+from player.minimax.minimax_player import MinimaxPlayer
 
 
 def main():
-    first_player = HumanPlayer()
+    # first_player = HumanPlayer()
 
     mcts_configuration = MctsConfiguration(30_000, 10)
-    second_player = MctsPlayer(mcts_configuration)
+    first_player = MctsPlayer(mcts_configuration)
+
+    minimax_configuration = MinimaxConfiguration(6)  # 7 takes a while
+    second_player = MinimaxPlayer(minimax_configuration)
 
     game_config = GameConfig()
     game_state = GameState(game_config)
