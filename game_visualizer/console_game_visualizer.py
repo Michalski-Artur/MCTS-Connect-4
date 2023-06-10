@@ -1,8 +1,8 @@
-from game_visualizer.igame_visualizer import IGameVisualizer
+from game_visualizer.igame_visualizer import GameVisualizer
 import numpy as np
 
 
-class ConsoleGameVisualizer(IGameVisualizer):
+class ConsoleGameVisualizer(GameVisualizer):
     def show_current_board(self, board: np.ndarray):
         board_size = board.shape
 

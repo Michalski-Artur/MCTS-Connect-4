@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from game_logic.igame_state import IGameState
-from game_visualizer.igame_visualizer import IGameVisualizer
+from game_visualizer.igame_visualizer import GameVisualizer
 from player.iplayer import IPlayer
 
 
@@ -26,7 +26,7 @@ class IGame(ABC):
 
     @property
     @abstractmethod
-    def game_visualizer(self) -> IGameVisualizer:
+    def game_visualizer(self) -> GameVisualizer:
         """Property representing game visualizer"""
         pass
 

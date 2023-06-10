@@ -1,6 +1,6 @@
-import math
 import random
 import time
+import numpy as np
 
 from game_logic.game_status import GameStatus
 from game_logic.igame_state import IGameState
@@ -12,7 +12,8 @@ class MctsNode(IMctsNode):
         self._game_state = game_state
         self._action = action
         self._parent = parent
-        self._number_of_wins = 0
+        self._reward = 0
+        self._reward_squared = 0
         self._number_of_runs = 0
         self.untried_actions = list(game_state.available_moves)
         self.children = list()
@@ -34,20 +35,20 @@ class MctsNode(IMctsNode):
         return self._number_of_runs
 
     @property
-    def number_of_wins(self) -> float:
-        return self._number_of_wins
+    def reward(self) -> float:
+        return self._reward
 
     @property
-    def exploitation_value(self) -> float:
-        return self.number_of_wins/self.number_of_runs
+    def reward_squared(self) -> float:
+        return self._reward_squared
 
     @property
-    def exploration_value(self) -> float:
-        return math.sqrt(2 * math.log(self.parent.number_of_runs) / self.number_of_runs)
+    def sample_mean(self) -> float:
+        return self.reward / self.number_of_runs
 
     @property
-    def uct(self) -> float:
-        return self.exploitation_value + self.exploration_value
+    def eval(self) -> float:
+        return self.sample_mean + np.sqrt(np.log(self.parent.number_of_runs) / self.number_of_runs)
 
     def build_tree(self, should_continue):
         iteration = 1
@@ -94,11 +95,13 @@ class MctsNode(IMctsNode):
     def backpropagate(self, node, state):
         while node:
             node._number_of_runs += 1
-            node._number_of_wins += state.get_results_for_player(self.game_state.is_first_player_move)
+            current_reward = state.get_results_for_player(self.game_state.is_first_player_move)
+            node._reward += current_reward
+            node._reward_squared += current_reward ** 2
             node = node.parent
 
     def select_child(self):
-        return max(self.children, key=lambda child: child.uct)
+        return max(self.children, key=lambda child: child.eval)
 
     def add_child(self, action: int, game_state: IGameState):
         child = MctsNode(game_state, action, self)
