@@ -50,7 +50,7 @@ class MctsNode(IMctsNode):
     def eval(self) -> float:
         return self.sample_mean + np.sqrt(np.log(self.parent.number_of_runs) / self.number_of_runs)
 
-    def build_tree(self, should_continue):
+    def build_tree_and_get_move(self, should_continue):
         iteration = 1
         start_time = time.time()
 
@@ -63,6 +63,9 @@ class MctsNode(IMctsNode):
 
             # Expand
             node, state = self.expand(node, state)
+            if node.parent == self and \
+                    (state.game_status == GameStatus.FirstPlayerWon or state.game_status == GameStatus.SecondPlayerWon):
+                return node.action
 
             # Simulate
             state = self.simulate(state)
@@ -71,6 +74,11 @@ class MctsNode(IMctsNode):
             self.backpropagate(node, state)
 
             iteration += 1
+
+        return self.select_best_move_from_tree()
+
+    def select_best_move_from_tree(self):
+        return max(self.children, key=lambda child: child.number_of_runs).action
 
     def select(self, node, state):
         while not node.untried_actions and node.game_state.available_moves:

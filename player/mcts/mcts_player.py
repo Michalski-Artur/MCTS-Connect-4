@@ -27,11 +27,8 @@ class MctsPlayer(IPlayer):
 
     def get_top_action(self, game_state: IGameState):
         root = self.get_tree_root(game_state)
+        return root.build_tree_and_get_move(self.should_continue_building_tree)
 
-        def should_continue_building_tree(iteration, time):
-            return iteration < self.configuration.max_iterations and \
-                   time < self.configuration.time_limit
-
-        root.build_tree(should_continue_building_tree)
-
-        return max(root.children, key=lambda child: child.number_of_runs).action
+    def should_continue_building_tree(self, iteration, time):
+        return iteration < self.configuration.max_iterations and \
+               time < self.configuration.time_limit
