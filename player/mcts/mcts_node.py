@@ -63,8 +63,15 @@ class MctsNode(IMctsNode):
 
             # Expand
             node, state = self.expand(node, state)
+
+            # Instant win check
             if node.parent == self and \
                     (state.game_status == GameStatus.FirstPlayerWon or state.game_status == GameStatus.SecondPlayerWon):
+                return node.action
+
+            # Instant loose check
+            if (state.game_status == GameStatus.FirstPlayerWon or state.game_status == GameStatus.SecondPlayerWon) and \
+                    node.parent and node.parent.parent == self and node.action != node.parent.action:
                 return node.action
 
             # Simulate
