@@ -58,27 +58,44 @@ class MctsNode(IMctsNode):
             state = self.game_state.clone()
 
             # Select
-            while not node.untried_actions and node.game_state.available_moves:
-                node = node.select_child()
-                state.make_move(node.action)
+            node = self.select(node, state)
 
             # Expand
-            if node.untried_actions:
-                action = random.choice(node.untried_actions)
-                state.make_move(action)
-                node = node.add_child(action, state)
+            node = self.expand(node, state)
 
             # Simulate
-            while state.game_status == GameStatus.InProgress:
-                state.make_move(random.choice(state.available_moves))
+            self.simulate(node, state)
 
             # Backpropagate
-            while node:
-                node._number_of_runs += 1
-                node._number_of_wins = state.get_results_for_player(self.game_state.is_first_player_move)
-                node = node.parent
+            self.backpropagate(node, state)
 
             iteration += 1
+
+    @staticmethod
+    def select(node, state):
+        while not node.untried_actions and node.game_state.available_moves:
+            node = node.select_child()
+            state.make_move(node.action)
+        return node
+
+    @staticmethod
+    def expand(node, state):
+        if node.untried_actions:
+            action = random.choice(node.untried_actions)
+            state.make_move(action)
+            node = node.add_child(action, state)
+        return node
+
+    @staticmethod
+    def simulate(node, state):
+        while state.game_status == GameStatus.InProgress:
+            state.make_move(random.choice(state.available_moves))
+
+    def backpropagate(self, node, state):
+        while node:
+            node._number_of_runs += 1
+            node._number_of_wins += state.get_results_for_player(self.game_state.is_first_player_move)
+            node = node.parent
 
     def select_child(self):
         return max(self.children, key=lambda child: child.uct)
