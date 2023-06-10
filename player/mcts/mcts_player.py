@@ -9,12 +9,17 @@ from player.mcts.imcts_node import IMctsNode
 class MctsPlayer(IPlayer):
     node_type: IMctsNode = MctsNode
 
-    def __init__(self, mcts_configuration: MctsConfiguration):
-        self.mcts_configuration = mcts_configuration
-        self._player_name = "MCTS player"
+    def __init__(self, mcts_configuration: MctsConfiguration, player_name="MCTS player"):
+        self._configuration = mcts_configuration
+        self._player_name = player_name
 
-    def get_name(self):
+    @property
+    def player_name(self):
         return self._player_name
+
+    @property
+    def configuration(self):
+        return self._configuration
     
     def get_and_make_next_move_for_player(self, game_state: IGameState) -> int:
         top_action = self.get_top_action(game_state)
@@ -25,8 +30,8 @@ class MctsPlayer(IPlayer):
         root = self.node_type(game_state, None, None)
 
         def should_continue_building_tree(iteration, time):
-            return iteration < self.mcts_configuration.max_iterations and \
-                   time < self.mcts_configuration.time_limit
+            return iteration < self.configuration.max_iterations and \
+                   time < self.configuration.time_limit
 
         root.build_tree(should_continue_building_tree)
 

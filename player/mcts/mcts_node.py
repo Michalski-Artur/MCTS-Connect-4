@@ -93,9 +93,9 @@ class MctsNode(IMctsNode):
             state.make_move(random.choice(state.available_moves))
 
     def backpropagate(self, node, state):
+        current_reward = state.get_results_for_player(self.game_state.is_first_player_move)
         while node:
             node._number_of_runs += 1
-            current_reward = state.get_results_for_player(self.game_state.is_first_player_move)
             node._reward += current_reward
             node._reward_squared += current_reward ** 2
             node = node.parent

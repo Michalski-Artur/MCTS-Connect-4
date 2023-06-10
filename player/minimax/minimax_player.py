@@ -10,8 +10,9 @@ from player.minimax.minimax_configuration import MinimaxConfiguration
 
 class MinimaxPlayer(IPlayer):
 
-    def __init__(self, minimax_configuration: MinimaxConfiguration):
+    def __init__(self, minimax_configuration: MinimaxConfiguration, player_name="Minimax"):
         self.minimax_configuration = minimax_configuration
+        self._player_name = player_name
         self._heuristic_fields_values = np.array([
                 [3, 4,  5,  7,  5, 4, 3],
                 [4, 6,  8, 10,  8, 6, 4],
@@ -20,6 +21,10 @@ class MinimaxPlayer(IPlayer):
                 [4, 6,  8, 10,  8, 6, 4],
                 [3, 4,  5,  7,  5, 4, 3]
             ])
+
+    @property
+    def player_name(self):
+        return self._player_name
 
     # TODO:
     #  If its hardcoded, it cannot be used for other board sizes, maybe it should be generated?
