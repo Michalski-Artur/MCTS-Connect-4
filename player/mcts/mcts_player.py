@@ -5,7 +5,7 @@ from player.mcts.mcts_node import MctsNode
 
 
 class MctsPlayer(IPlayer):
-    def __init__(self, mcts_configuration: MctsConfiguration, player_name="MCTS player"):
+    def __init__(self, mcts_configuration: MctsConfiguration, player_name="MCTS"):
         self._configuration = mcts_configuration
         self._player_name = player_name
 
