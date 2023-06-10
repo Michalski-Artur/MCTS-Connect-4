@@ -59,38 +59,36 @@ class MctsNode(IMctsNode):
             state = self.game_state.clone()
 
             # Select
-            node = self.select(node, state)
+            node, state = self.select(node, state)
 
             # Expand
-            node = self.expand(node, state)
+            node, state = self.expand(node, state)
 
             # Simulate
-            self.simulate(node, state)
+            state = self.simulate(state)
 
             # Backpropagate
             self.backpropagate(node, state)
 
             iteration += 1
 
-    @staticmethod
-    def select(node, state):
+    def select(self, node, state):
         while not node.untried_actions and node.game_state.available_moves:
             node = node.select_child()
             state.make_move(node.action)
-        return node
+        return node, state
 
-    @staticmethod
-    def expand(node, state):
+    def expand(self, node, state):
         if node.untried_actions:
             action = random.choice(node.untried_actions)
             state.make_move(action)
             node = node.add_child(action, state)
-        return node
+        return node, state
 
-    @staticmethod
-    def simulate(node, state):
+    def simulate(self, state):
         while state.game_status == GameStatus.InProgress:
             state.make_move(random.choice(state.available_moves))
+        return state
 
     def backpropagate(self, node, state):
         current_reward = state.get_results_for_player(self.game_state.is_first_player_move)

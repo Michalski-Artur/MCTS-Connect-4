@@ -1,44 +1,21 @@
 import random
-import time
 
 from game_logic.game_status import GameStatus
 from game_logic.igame_state import IGameState
-from player.history_heuristic.history_heuristic_player import HistoryHeuristicPlayer
+from player.mcts.imcts_node import IMctsNode
 
 from player.mcts.mcts_node import MctsNode
 
 
 class HistoryHeuristicNode(MctsNode):
 
-    def build_history_tree(self, should_continue, total_rewards_for_actions, times_actions_has_been_selected, epsilon):
-        iteration = 1
-        start_time = time.time()
+    def __init__(self, game_state: IGameState, action: int, parent: IMctsNode, epsilon = 0):
+        super().__init__(game_state, action, parent)
+        self._epsilon = epsilon
 
-        while should_continue(iteration, time.time() - start_time):
-            node = self
-            state = self.game_state.clone()
-
-            # Select
-            node = self.select(node, state)
-
-            # Expand
-            node = self.expand(node, state)
-
-            # Simulate
-            self.simulate(node, state)
-
-            # Backpropagate
-            action, current_reward = self.backpropagate(node, state)
-
-            if action not in times_actions_has_been_selected:
-                times_actions_has_been_selected[action] = 0
-            times_actions_has_been_selected[action] += 1
-
-            if action not in total_rewards_for_actions:
-                total_rewards_for_actions[action] = 0
-            total_rewards_for_actions[action] += current_reward
-
-            iteration += 1
+    @property
+    def epsilon(self) -> float:
+        return self._epsilon
 
     def add_child(self, action: int, game_state: IGameState):
         child = HistoryHeuristicNode(game_state, action, self)
@@ -47,27 +24,20 @@ class HistoryHeuristicNode(MctsNode):
 
         return child
 
-    @staticmethod
-    def simulate(node, state):
+    def simulate(self, state):
+        actions_history = self.get_actions_history_dictionary()
         while state.game_status == GameStatus.InProgress:
             p = random.random()
-            if p < HistoryHeuristicPlayer.configuration.epsilon:
+            if p < self.epsilon:
+                # Get first available move based on actions history
+                for action in actions_history:
+                    if action in state.available_moves:
+                        state.make_move(action)
+                        break
+            else:
                 state.make_move(random.choice(state.available_moves))
-            else
+        return state
 
-    def backpropagate(self, node, state):
-        current_reward = state.get_results_for_player(self.game_state.is_first_player_move)
-        action = node.action
-        while node:
-            node._number_of_runs += 1
-            node._reward += current_reward
-            node._reward_squared += current_reward ** 2
-            action = node.action
-            node = node.parent
-        return action, current_reward
-
-    def get
-
-
-
-
+    def get_actions_history_dictionary(self):
+        children = filter(lambda child: child.number_of_runs > 0, self.children)
+        return {child.action: child.sample_mean for child in sorted(children, key=lambda child: child.sample_mean)}

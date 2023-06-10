@@ -2,20 +2,39 @@ from game_logic.game import Game
 from game_logic.game_config import GameConfig
 from game_logic.game_state import GameState
 from game_visualizer.console_game_visualizer import ConsoleGameVisualizer
+from player.history_heuristic.history_heuristic_configuration import HistoryHeuristicConfiguration
+from player.history_heuristic.history_heuristic_player import HistoryHeuristicPlayer
 from player.human.human_player import HumanPlayer
 from player.mcts.mcts_configuration import MctsConfiguration
 from player.mcts.mcts_player import MctsPlayer
 from player.minimax.minimax_configuration import MinimaxConfiguration
 from player.minimax.minimax_player import MinimaxPlayer
+from player.ucb1_tuned.ucb1_tuned_player import Ucb1TunedPlayer
 
 
 def main():
+    # Human
     # first_player = HumanPlayer()
+    # second_player = HumanPlayer()
 
+    # MCTS
     mcts_configuration = MctsConfiguration(30_000, 10)
-    first_player = MctsPlayer(mcts_configuration)
+    # first_player = MctsPlayer(mcts_configuration)
+    # second_player = MctsPlayer(mcts_configuration)
 
+    # UCB1
+    ucb_configuration = MctsConfiguration(30_000, 10)
+    # first_player = Ucb1TunedPlayer(ucb_configuration)
+    # second_player = MctsPlayer(ucb_configuration)
+
+    # History
+    history_heuristic_configuration = HistoryHeuristicConfiguration(30_000, 10, 0.3)
+    first_player = HistoryHeuristicPlayer(history_heuristic_configuration)
+    # second_player = HistoryHeuristicPlayer(history_heuristic_configuration)
+
+    # Minimax
     minimax_configuration = MinimaxConfiguration(6)  # 7 takes a while
+    # first_player = MinimaxPlayer(minimax_configuration)
     second_player = MinimaxPlayer(minimax_configuration)
 
     game_config = GameConfig()
