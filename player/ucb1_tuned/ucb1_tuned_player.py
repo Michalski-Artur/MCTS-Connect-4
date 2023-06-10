@@ -7,12 +7,7 @@ from game_logic.igame_state import IGameState
 class Ucb1TunedPlayer(MctsPlayer):
 
     def __init__(self, mcts_configuration: MctsConfiguration, player_name="Ucb1Tuned"):
-        super().__init__(mcts_configuration)
-        self._player_name = player_name
-
-    @property
-    def player_name(self):
-        return self._player_name
+        super().__init__(mcts_configuration, player_name)
 
     def get_tree_root(self, game_state: IGameState):
         return Ucb1TunedNode(game_state, None, None)

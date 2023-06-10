@@ -6,12 +6,7 @@ from player.mcts.mcts_player import MctsPlayer
 
 class HistoryHeuristicPlayer(MctsPlayer):
     def __init__(self, history_heuristic_configuration: HistoryHeuristicConfiguration, player_name="HistoryHeuristic"):
-        super().__init__(history_heuristic_configuration)
-        self._player_name = player_name
-
-    @property
-    def player_name(self):
-        return self._player_name
+        super().__init__(history_heuristic_configuration, player_name)
 
     def get_tree_root(self, game_state: IGameState):
         return HistoryHeuristicNode(game_state, None, None, self.configuration.epsilon)
