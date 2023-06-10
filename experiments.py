@@ -14,15 +14,12 @@ from player.minimax.minimax_configuration import MinimaxConfiguration
 from player.minimax.minimax_player import MinimaxPlayer
 
 
-
-
 class Experiments:
     def __init__(self, iterations=50):
         self.iterations = iterations
         self.game_config = GameConfig()
         self.global_score = list()
 
-        
     def play_single_game(self, first_player, second_player, score_mutex, score):
         game_state = GameState(self.game_config)
         game = Game(game_state, first_player, second_player, print_game_stats=False)
@@ -37,7 +34,6 @@ class Experiments:
         else:
             score['second_player']['score'] += 1
         score_mutex.release()
-
 
     def play_in_threads(self, first_player, second_player):
         score = {'first_player': {'player_type': first_player.get_name(), 'score': 0}, 
@@ -61,7 +57,6 @@ class Experiments:
 
         return score
 
-
     def run_experiments(self):
         mcts_config = MctsConfiguration(30_000, 10)
         minimax_config = MinimaxConfiguration(6)
@@ -70,19 +65,19 @@ class Experiments:
         for player1, player2 in itertools.permutations(self.players, 2):
             self.global_score.append(self.play_in_threads(player1, player2))
 
-
     def print_scores(self):
         print('Results:')
         for game in self.global_score:
             player1 = game['first_player']
             player2 = game['second_player']
             print(f"{player1['player_type']}  {player1['score']}:{player2['score']}  {player2['player_type']}")
-    
+
 
 def main():
     experiments = Experiments(50)
     experiments.run_experiments()
     experiments.print_scores()
+
 
 if __name__ == "__main__":
     main()
