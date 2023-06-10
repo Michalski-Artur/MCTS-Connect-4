@@ -25,7 +25,7 @@ def main():
     # UCB1
     ucb_configuration = MctsConfiguration(30_000, 10)
     # first_player = Ucb1TunedPlayer(ucb_configuration)
-    # second_player = MctsPlayer(ucb_configuration)
+    second_player = Ucb1TunedPlayer(ucb_configuration)
 
     # History
     history_heuristic_configuration = HistoryHeuristicConfiguration(30_000, 10, 0.3)
@@ -35,7 +35,7 @@ def main():
     # Minimax
     minimax_configuration = MinimaxConfiguration(6)  # 7 takes a while
     # first_player = MinimaxPlayer(minimax_configuration)
-    second_player = MinimaxPlayer(minimax_configuration)
+    # second_player = MinimaxPlayer(minimax_configuration)
 
     game_config = GameConfig()
     game_state = GameState(game_config)

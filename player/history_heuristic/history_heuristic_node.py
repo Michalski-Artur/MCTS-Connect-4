@@ -17,13 +17,6 @@ class HistoryHeuristicNode(MctsNode):
     def epsilon(self) -> float:
         return self._epsilon
 
-    def add_child(self, action: int, game_state: IGameState):
-        child = HistoryHeuristicNode(game_state, action, self)
-        self.untried_actions.remove(action)
-        self.children.append(child)
-
-        return child
-
     def simulate(self, state):
         actions_history = self.get_actions_history_dictionary()
         while state.game_status == GameStatus.InProgress:

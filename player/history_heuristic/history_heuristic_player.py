@@ -15,13 +15,5 @@ class HistoryHeuristicPlayer(MctsPlayer):
     def configuration(self):
         return self._configuration
 
-    def get_top_action(self, game_state: IGameState):
-        root = HistoryHeuristicNode(game_state, None, None, self.configuration.epsilon)
-
-        def should_continue_building_tree(iteration, time):
-            return iteration < self.configuration.max_iterations and \
-                   time < self.configuration.time_limit
-
-        root.build_tree(should_continue_building_tree)
-
-        return max(root.children, key=lambda child: child.number_of_runs).action
+    def get_tree_root(self, game_state: IGameState):
+        return HistoryHeuristicNode(game_state, None, None, self.configuration.epsilon)

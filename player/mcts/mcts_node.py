@@ -102,7 +102,8 @@ class MctsNode(IMctsNode):
         return max(self.children, key=lambda child: child.eval)
 
     def add_child(self, action: int, game_state: IGameState):
-        child = MctsNode(game_state, action, self)
+        node_type = self.__class__
+        child = node_type(game_state, action, self)
         self.untried_actions.remove(action)
         self.children.append(child)
 
