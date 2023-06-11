@@ -63,42 +63,46 @@ class Experiments:
         print(f"Runtime for {self.iterations} iterations is: {round(runtime / 60, 4)} min")
         return score
 
-    def run_experiments(self):
-        mcts_config = MctsConfiguration(30_000, 10)
-        history_heuristic_config = HistoryHeuristicConfiguration(30_000, 10, 0.3)
-        minimax_config = MinimaxConfiguration(4)
-        self.players = [
+    def run_experiments(self, players):
+        for player1 in players[:1]:
+            for player2 in players:
+                self.global_score.append(self.play_in_threads(player1, player2))
+                
+                self.print_single_game(self.global_score[-1])
+
+
+    def print_scores(self):
+        print('RESULTS:')
+        for game in self.global_score:
+            self.print_single_game(game)
+
+    def print_single_game(self, game):
+        player1 = game['first_player']
+        player2 = game['second_player']
+        print()
+        print(f"Scores: {player1['player_type']}  {player1['score']}:{player2['score']}  {player2['player_type']}")
+        print(f"Wins: {player1['player_type']}  {player1['wins']}:{player2['wins']}  {player2['player_type']}")
+        print(f"Draws: {player1['player_type']}  {player1['draws']}:{player2['draws']}  {player2['player_type']}")
+        print(f"Loses: {player1['player_type']}  {player1['loses']}:{player2['loses']}  {player2['player_type']}")
+        print()
+
+
+
+def main():
+    experiments = Experiments(50)
+    
+    mcts_config = MctsConfiguration(10_000, 10)
+    history_heuristic_config = HistoryHeuristicConfiguration(10_000, 10, 0.3)
+    minimax_config = MinimaxConfiguration(4)
+    players = [
             MctsPlayer(mcts_config),
             Ucb1TunedPlayer(mcts_config),
             MinimaxPlayer(minimax_config),
             ScoreBoundedMctsPlayer(mcts_config),
             HistoryHeuristicPlayer(history_heuristic_config)
-            ]
+    ]
 
-        for player1, player2 in itertools.permutations(self.players, 2):
-            self.global_score.append(self.play_in_threads(player1, player2))
-            print(self.global_score[-1])
-
-        # playing against itself
-        for player in self.players:
-            self.global_score.append(self.play_in_threads(player, player))
-
-    def print_scores(self):
-        print('Results:')
-        for game in self.global_score:
-            player1 = game['first_player']
-            player2 = game['second_player']
-            print()
-            print(f"Scores: {player1['player_type']}  {player1['score']}:{player2['score']}  {player2['player_type']}")
-            print(f"Wins: {player1['player_type']}  {player1['wins']}:{player2['wins']}  {player2['player_type']}")
-            print(f"Draws: {player1['player_type']}  {player1['draws']}:{player2['draws']}  {player2['player_type']}")
-            print(f"Loses: {player1['player_type']}  {player1['loses']}:{player2['loses']}  {player2['player_type']}")
-            print()
-
-
-def main():
-    experiments = Experiments(50)
-    experiments.run_experiments()
+    experiments.run_experiments(players)
     experiments.print_scores()
 
 if __name__ == "__main__":
