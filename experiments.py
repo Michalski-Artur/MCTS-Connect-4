@@ -29,17 +29,23 @@ class Experiments:
         game_status = game.play()
         score_mutex.acquire()
         if game_status == GameStatus.Draw:
+            score['first_player']['draws'] += 1
             score['first_player']['score'] += 0.5
+            score['second_player']['draws'] += 1
             score['second_player']['score'] += 0.5
         elif game_status == GameStatus.FirstPlayerWon:
+            score['first_player']['wins'] += 1
             score['first_player']['score'] += 1
+            score['second_player']['loses'] += 1
         else:
+            score['first_player']['loses'] += 1
             score['second_player']['score'] += 1
+            score['second_player']['wins'] += 1
         score_mutex.release()
 
     def play_in_threads(self, first_player, second_player):
-        score = {'first_player': {'player_type': first_player.player_name, 'score': 0}, 
-                 'second_player': {'player_type': second_player.player_name, 'score': 0}}
+        score = {'first_player': {'player_type': first_player.player_name, 'score': 0, 'wins': 0, 'loses': 0, 'draws': 0},
+                 'second_player': {'player_type': second_player.player_name, 'score': 0, 'wins': 0, 'loses': 0, 'draws': 0}}
 
         score_mutex = threading.Lock()
         threads = []
@@ -60,11 +66,11 @@ class Experiments:
     def run_experiments(self):
         mcts_config = MctsConfiguration(30_000, 10)
         history_heuristic_config = HistoryHeuristicConfiguration(30_000, 10, 0.3)
-        minimax_config = MinimaxConfiguration(6)
+        minimax_config = MinimaxConfiguration(4)
         self.players = [
-            MctsPlayer(mcts_config), 
-            Ucb1TunedPlayer(mcts_config), 
-            MinimaxPlayer(minimax_config), 
+            MctsPlayer(mcts_config),
+            Ucb1TunedPlayer(mcts_config),
+            MinimaxPlayer(minimax_config),
             ScoreBoundedMctsPlayer(mcts_config),
             HistoryHeuristicPlayer(history_heuristic_config)]
 
@@ -80,7 +86,12 @@ class Experiments:
         for game in self.global_score:
             player1 = game['first_player']
             player2 = game['second_player']
-            print(f"{player1['player_type']}  {player1['score']}:{player2['score']}  {player2['player_type']}")
+            print()
+            print(f"Scores: {player1['player_type']}  {player1['score']}:{player2['score']}  {player2['player_type']}")
+            print(f"Wins: {player1['player_type']}  {player1['wins']}:{player2['wins']}  {player2['player_type']}")
+            print(f"Draws: {player1['player_type']}  {player1['draws']}:{player2['draws']}  {player2['player_type']}")
+            print(f"Loses: {player1['player_type']}  {player1['loses']}:{player2['loses']}  {player2['player_type']}")
+            print()
 
 
 def main():

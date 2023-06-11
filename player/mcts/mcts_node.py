@@ -47,12 +47,20 @@ class MctsNode(IMctsNode):
         return self.reward / self.number_of_runs
 
     @property
+    def c(self) -> float:
+        return np.sqrt(2)
+
+    @property
     def eval(self) -> float:
-        return self.sample_mean + np.sqrt(np.log(self.parent.number_of_runs) / self.number_of_runs)
+        return self.sample_mean + self.c * np.sqrt(np.log(self.parent.number_of_runs) / self.number_of_runs)
 
     def build_tree_and_get_move(self, should_continue):
         iteration = 1
         start_time = time.time()
+
+        # Single move possibility check
+        if len(self._game_state.available_moves) == 1:
+            return self._game_state.available_moves[0]
 
         while should_continue(iteration, time.time() - start_time):
             node = self
@@ -73,6 +81,12 @@ class MctsNode(IMctsNode):
             if (state.game_status == GameStatus.FirstPlayerWon or state.game_status == GameStatus.SecondPlayerWon) and \
                     node.parent and node.parent.parent == self and node.action != node.parent.action:
                 return node.action
+
+            # Instant loose after our move check
+            if (state.game_status == GameStatus.FirstPlayerWon or state.game_status == GameStatus.SecondPlayerWon) and \
+                    node.parent and node.parent.parent == self and node.action == node.parent.action and\
+                    not self.untried_actions and len(self.children) > 1:
+                self.children.remove(node.parent)
 
             # Simulate
             state = self.simulate(state)
