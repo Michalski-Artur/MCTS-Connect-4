@@ -52,7 +52,7 @@ class MctsNode(IMctsNode):
 
     @property
     def eval(self) -> float:
-        return self.sample_mean + self.c * np.sqrt(np.log(self.parent.number_of_runs) / self.number_of_runs)
+        return self.sample_mean + self.c * np.sqrt(2 * np.log(self.parent.number_of_runs) / self.number_of_runs)
 
     def build_tree_and_get_move(self, should_continue):
         iteration = 1
@@ -67,10 +67,10 @@ class MctsNode(IMctsNode):
             state = self.game_state.clone()
 
             # Select
-            node, state = self.select(node, state)
+            node = self.select(node, state)
 
             # Expand
-            node, state = self.expand(node, state)
+            node = self.expand(node, state)
 
             # Instant win check
             if node.parent == self and \
@@ -89,7 +89,7 @@ class MctsNode(IMctsNode):
                 self.children.remove(node.parent)
 
             # Simulate
-            state = self.simulate(state)
+            self.simulate(state)
 
             # Backpropagate
             self.backpropagate(node, state)
@@ -105,19 +105,18 @@ class MctsNode(IMctsNode):
         while not node.untried_actions and node.game_state.available_moves:
             node = node.select_child()
             state.make_move(node.action)
-        return node, state
+        return node
 
     def expand(self, node, state):
         if node.untried_actions:
             action = random.choice(node.untried_actions)
             state.make_move(action)
             node = node.add_child(action, state)
-        return node, state
+        return node
 
     def simulate(self, state):
         while state.game_status == GameStatus.InProgress:
             state.make_move(random.choice(state.available_moves))
-        return state
 
     def backpropagate(self, node, state):
         current_reward = state.get_results_for_player(self.game_state.is_first_player_move)

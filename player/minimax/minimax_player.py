@@ -1,4 +1,5 @@
 import math
+from typing import Tuple
 
 import numpy as np
 
@@ -43,7 +44,7 @@ class MinimaxPlayer(IPlayer):
         game_state.make_move(move)
         return move
 
-    def minimax(self, game_state, current_depth, max_turn, move, is_first_player) -> (int, int):
+    def minimax(self, game_state, current_depth, max_turn, move, is_first_player) -> Tuple[int, int]:
         if move is not None:
             game_state = game_state.clone()
             game_state.make_move(move)

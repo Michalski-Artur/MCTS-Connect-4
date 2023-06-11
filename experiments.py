@@ -72,10 +72,12 @@ class Experiments:
             Ucb1TunedPlayer(mcts_config),
             MinimaxPlayer(minimax_config),
             ScoreBoundedMctsPlayer(mcts_config),
-            HistoryHeuristicPlayer(history_heuristic_config)]
+            HistoryHeuristicPlayer(history_heuristic_config)
+            ]
 
         for player1, player2 in itertools.permutations(self.players, 2):
             self.global_score.append(self.play_in_threads(player1, player2))
+            print(self.global_score[-1])
 
         # playing against itself
         for player in self.players:
