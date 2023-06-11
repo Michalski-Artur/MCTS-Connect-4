@@ -16,7 +16,7 @@ class ScoreBoundedMctsNode(MctsNode):
         while not node.untried_actions and node.game_state.available_moves:
             node = node.select_child(node.game_state.is_first_player_move)
             state.make_move(node.action)
-        return node, state
+        return node
     
     def backpropagate(self, node, state):
         current_reward = state.get_results_for_player(self.game_state.is_first_player_move)
