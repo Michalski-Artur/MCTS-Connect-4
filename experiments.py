@@ -13,6 +13,7 @@ from player.mcts.mcts_player import MctsPlayer
 from player.ucb1_tuned.ucb1_tuned_player import Ucb1TunedPlayer
 from player.minimax.minimax_configuration import MinimaxConfiguration
 from player.minimax.minimax_player import MinimaxPlayer
+from player.score_bounded_mcts.score_bounded_mcts_player import ScoreBoundedMctsPlayer
 from player.history_heuristic.history_heuristic_player import HistoryHeuristicPlayer
 
 
@@ -37,7 +38,7 @@ class Experiments:
         score_mutex.release()
 
     def play_in_threads(self, first_player, second_player):
-        score = {'first_player': {'player_type': first_player.player_name, 'score': 0},
+        score = {'first_player': {'player_type': first_player.player_name, 'score': 0}, 
                  'second_player': {'player_type': second_player.player_name, 'score': 0}}
 
         score_mutex = threading.Lock()
@@ -61,13 +62,18 @@ class Experiments:
         history_heuristic_config = HistoryHeuristicConfiguration(30_000, 10, 0.3)
         minimax_config = MinimaxConfiguration(6)
         self.players = [
-            MctsPlayer(mcts_config),
-            Ucb1TunedPlayer(mcts_config),
-            MinimaxPlayer(minimax_config),
+            MctsPlayer(mcts_config), 
+            Ucb1TunedPlayer(mcts_config), 
+            MinimaxPlayer(minimax_config), 
+            ScoreBoundedMctsPlayer(mcts_config),
             HistoryHeuristicPlayer(history_heuristic_config)]
 
         for player1, player2 in itertools.permutations(self.players, 2):
             self.global_score.append(self.play_in_threads(player1, player2))
+
+        # playing against itself
+        for player in self.players:
+            self.global_score.append(self.play_in_threads(player, player))
 
     def print_scores(self):
         print('Results:')
@@ -81,7 +87,6 @@ def main():
     experiments = Experiments(50)
     experiments.run_experiments()
     experiments.print_scores()
-
 
 if __name__ == "__main__":
     main()
