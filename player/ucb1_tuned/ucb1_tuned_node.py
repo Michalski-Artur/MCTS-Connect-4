@@ -11,4 +11,4 @@ class Ucb1TunedNode(MctsNode):
     @property
     def eval(self) -> float:
         ratio_of_visits = np.log(self.parent.number_of_runs) / self.number_of_runs
-        return self.sample_mean + self.c * np.sqrt(ratio_of_visits * min(0.25, self.variance_bound + 2 * ratio_of_visits))
+        return self.sample_mean + self.c * np.sqrt(ratio_of_visits * min(0.25, self.variance_bound + np.sqrt(2 * ratio_of_visits)))
