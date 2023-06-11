@@ -66,10 +66,13 @@ class Experiments:
     def run_experiments(self):
         mcts_config = MctsConfiguration(30_000, 10)
         history_heuristic_config = HistoryHeuristicConfiguration(30_000, 10, 0.3)
-        minimax_config = MinimaxConfiguration(6)
+        minimax_config = MinimaxConfiguration(4)
         self.players = [
-            MctsPlayer(mcts_config), 
-            Ucb1TunedPlayer(mcts_config)]
+            MctsPlayer(mcts_config),
+            Ucb1TunedPlayer(mcts_config),
+            MinimaxPlayer(minimax_config),
+            ScoreBoundedMctsPlayer(mcts_config),
+            HistoryHeuristicPlayer(history_heuristic_config)]
 
         for player1, player2 in itertools.permutations(self.players, 2):
             self.global_score.append(self.play_in_threads(player1, player2))
@@ -83,6 +86,7 @@ class Experiments:
         for game in self.global_score:
             player1 = game['first_player']
             player2 = game['second_player']
+            print()
             print(f"Scores: {player1['player_type']}  {player1['score']}:{player2['score']}  {player2['player_type']}")
             print(f"Wins: {player1['player_type']}  {player1['wins']}:{player2['wins']}  {player2['player_type']}")
             print(f"Draws: {player1['player_type']}  {player1['draws']}:{player2['draws']}  {player2['player_type']}")
@@ -91,7 +95,7 @@ class Experiments:
 
 
 def main():
-    experiments = Experiments(5)
+    experiments = Experiments(50)
     experiments.run_experiments()
     experiments.print_scores()
 
